@@ -1,0 +1,14 @@
+import re
+import requests
+url = 'https://support.spatialkey.com/spatialkey-sample-csv-data/'   # URL goes here
+data=requests.get(url).content
+lst=[]
+for item in re.findall('http.*\.zip',data):     #replace zip with with your filetype such as pdf or txt
+    lst.append(item.split(' ')[0])
+for url in lst:
+    
+    filename=url.split('/')[-1]
+    f=open('filename','w')
+    print filename
+    data=requests.get(url).content
+    f.write(data)
