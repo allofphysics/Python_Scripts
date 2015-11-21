@@ -1,14 +1,26 @@
 import re
 import requests
-url = 'https://support.spatialkey.com/spatialkey-sample-csv-data/'   # URL goes here
+
+url = 'https://docs.djangoproject.com/en/1.8/howto/static-files/' # URL goes here
+split=re.split('/',url)
+domain=split[0]+'//'+split[2]
+print domain
+filetype=''                                  #filetype goes here pdf, txt, ...  
 data=requests.get(url).content
 lst=[]
-for item in re.findall('http.*\.zip',data):     #replace zip with with your filetype such as pdf or txt
+urls=[]
+other=[]
+for item in re.findall('http.*|href.*',data):     
     lst.append(item.split(' ')[0])
 for url in lst:
-    
-    filename=url.split('/')[-1]
-    f=open('filename','w')
-    print filename
-    data=requests.get(url).content
-    f.write(data)
+    match=re.findall('.*'+filetype,url)
+    if match:
+        match=re.sub('href=|>|<.*','',match[0])
+        match=re.sub('/".*','/"',match)
+        if re.findall('http',match):
+            match=re.sub('"',' ',match)
+            
+            print match
+        else:
+            other.append(match)
+print other
