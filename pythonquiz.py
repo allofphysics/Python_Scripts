@@ -1,30 +1,45 @@
-
-# coding: utf-8
-
-# In[14]:
-
+import requests
+import re
 import pandas as pd
 import numpy as np
-from datetime import datetime
-import datetime
 from pandas import read_table
-pd.set_option('display.max_rows',500)
-pd.set_option('display.width',1000)
+import datetime
 import subprocess
 from redis import Redis
+
+pd.set_option('display.max_rows',500)
+pd.set_option('display.width',1000)
+
 redis_client=Redis(host='127.0.0.1', port=6379, db = 3)
 
-#def runShellCmd(cmd):
-#    run = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-#    out, err = run.communicate()
-#    if err:
-#        print err
-
-#if you have w3m install this will pull the page from the site
-#cmd='w3m  http://www.sanfoundry.com/python-quiz-online/ >test2.txt'
-#runShellCmd(cmd)
 
 
+def runShellCmd(cmd):
+    run = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = run.communicate()
+    if err:
+        print err
+
+def get_content():
+    url='http://www.sanfoundry.com/1000-python-questions-answers/'
+    data=requests.get(url).content
+    data=re.findall('http.*/python.*',data) #finds the useful urls on the page
+    url_lst=[]
+    for indx,line in enumerate(data):
+        url=re.sub('>.*|".*','',line)
+        file_name=re.split('\.com/|/|python\-',url)[-2]+'.txt' #parses the url to get a filename
+        cmd='w3m {}>{}'.format(url,file_name)
+        runShellCmd(cmd)
+   
+
+get_content()    
+
+
+
+
+
+
+#parses the text file for content
 name_of_quiz = 'strings1.txt'
 df=pd.read_table('test2.txt',names=['a'])
 start=df.a[df.a.str.contains('1\.')].index.tolist()[0]
@@ -34,6 +49,7 @@ df.replace('View Answer','',inplace=True)
 questions_index_list=df[df.a.str.contains('^\d{1,}\..*\?')].index.tolist()
 explanation_index=df[df.a.str.contains('Explanation')].index.tolist()
 answer_index=df.a[df.a.str.contains('Answer')].index.tolist()
+
 
 def prob_fun(start,stop,score):
     
