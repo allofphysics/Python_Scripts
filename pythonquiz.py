@@ -93,9 +93,16 @@ percentage=float(score)/counter
 
 
 time=datetime.datetime.now()
-redis_client.hmset(name_of_quiz,{time:percentage*100})
-redis_client.hmset(name_of_quiz,scoring)
+#redis_client.hmset(name_of_quiz,{time:percentage*100})
+#redis_client.hmset(name_of_quiz,scoring)
 
 
 
+times={}
+for indx,time in enumerate(scoring.values()):
+    times[str(indx+1)]=str(time).split(':')[-1]
+    
+
+time=datetime.datetime.now()
+redis_client.hmset(name_of_quiz,{time:{str(percentage*100):times}})
 
