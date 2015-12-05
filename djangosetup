@@ -1,0 +1,216 @@
+#run sudo command first 
+#virtual env setup
+mkdir website
+cd website/
+sudo apt-get install python3-venv -y
+python3 -m venv myvenv
+source myvenv/bin/activate
+pip install django==1.8
+
+
+#start project 
+django-admin startproject mysite .
+##############echo "STATIC_ROOT = os.path.join(BASE_DIR, 'static')" >> mysite/settings.py      
+
+     
+python manage.py migrate
+sudo fuser -k 8000/tcp
+python manage.py startapp blog
+sed -i '34i\   \t"blog",' mysite/settings.py
+
+######################   TIME_ZONE = 'America/New_York'
+
+
+
+echo 'from django.db import models
+from django.utils import timezone
+class Post(models.Model):
+    author = models.ForeignKey("auth.User")
+    title = models.CharField(max_length=200)
+    text = models.TextField()
+    created_date = models.DateTimeField(
+            default=timezone.now)
+    published_date = models.DateTimeField(
+            blank=True, null=True)
+
+    def publish(self):
+        self.published_date = timezone.now()
+        self.save()
+
+    def __str__(self):
+        return self.title'>blog/models.py
+
+
+
+
+python manage.py makemigrations blog
+python manage.py migrate blog
+
+
+echo 'from django.contrib import admin
+from .models import Post
+admin.site.register(Post)'>blog/admin.py
+
+
+
+
+
+
+
+
+############################################33
+
+echo 'from django.contrib import admin
+from .models import Post
+admin.site.register(Post)' >blog/admin.py
+
+touch blog/urls.py
+
+
+echo "from django.conf.urls import url
+from . import views
+
+urlpatterns = [
+    url(r'^$', views.post_list, name='post_list'),
+]">blog/urls.py
+
+
+
+
+
+echo "from django.shortcuts import render
+from django.utils import timezone
+from .models import Post
+
+def post_list(request):
+    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
+    return render(request, 'blog/post_list.html', {'posts': posts})">blog/views.py
+    
+
+    
+mkdir blog/templates/
+mkdir  blog/templates/blog 
+
+
+echo '<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+<div>
+    <h1><a href="/">Blog</a></h1>
+</div>
+
+{% for post in posts %}
+    <div>
+        <p>published: {{ post.published_date }}</p>
+        <h1><a href="">{{ post.title }}</a></h1>
+        <p>{{ post.text|linebreaks }}</p>
+        
+    </div>
+{% endfor %}'>blog/templates/blog/post_list.html
+
+################################
+blogs/admin.py
+blog/urls.py
+blog/views.py
+blog/templates/blog
+######################
+
+git init
+
+echo "\.gitignore
+*\.pyc
+__pycache__
+myvenv
+db.sqlite3
+/static
+.DS_Store " > .gitignore
+
+
+#del github repo 
+git add -A
+git config user.email mike@allofphysics.com
+curl -u 'allofphysics' https://api.github.com/user/repos -d '{"name":"projectname","description":"This project is a test"}'
+#needs password#
+git commit -m 'test'
+git push --set-upstream https://github.com/allofphysics/projectname.git master
+
+
+
+
+firefox https://www.pythonanywhere.com/
+
+
+git clone https://github.com/allofphysics/projectname.git
+cd projectname
+virtualenv --python=python3.4 myvenv
+source myvenv/bin/activate
+pip install django whitenoise
+python manage.py collectstatic
+##needs answer###########33
+
+
+python manage.py migrate
+python manage.py createsuperuser --username mike --email mike@allofphysics.com
+###############password
+
+
+in PA 
+add new web app
+manual config
+3.4
+
+virtual env edit 
+/home/timetracking/projectname/myvenv/
+
+
+http://tutorial.djangogirls.org/en/deploy/index.html
+
+wsgi remove all
+import os
+import sys
+
+path = '/home/timetracking/projectname'  # use your own username here
+
+
+if path not in sys.path:
+    sys.path.append(path)
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'mysite.settings'
+
+from django.core.wsgi import get_wsgi_application
+from whitenoise.django import DjangoWhiteNoise
+application = DjangoWhiteNoise(get_wsgi_application())
+
+#####################333start################################333
+
+
+
+
+
+
+mysite/urls.py
+add
+url(r'', include('blog.urls')),
+
+
+
+
+#####
+
+
+
+
+
+ touch    
+    └─── blog
+     └─── static
+          └─── css
+               └─── blog.css
+
+    
+
+
+
+
+
+
+
