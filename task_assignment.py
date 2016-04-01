@@ -1,4 +1,6 @@
-
+#given a list of tasks and a number of working hours will return the min number of days where no set of tasks is left 
+#incomplete on any given day. 
+#for example if working hours is 4 and the tasks are [3,2,3] the number of days to complete will be 3 
 def tasksScheduling(workingHours, tasks):
     if max(tasks)>workingHours:
         return -1
