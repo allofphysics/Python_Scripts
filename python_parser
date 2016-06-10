@@ -1,0 +1,31 @@
+#some goals of the script
+#Extract relevant information out of python libraries and packages in a progrmatic way. 
+#determine some metrics of code quality
+#contact information if provided
+#information that will help me better use the code in my projects
+#find code that will be useful both in projects and to learn from 
+#apply data mining and analysis techniques to the python language 
+
+
+import re
+summary={}
+commented_out=[]
+dict_of_things={'comments':'.*#.*',                        #the regex is far from complete or precise
+                'imports':'import .*',
+                'variables':'.*=.*',
+                'print':'print.*',
+                'function_definitions':'def.*',
+                'class_definitions':'class.*',
+                'return_statements':'return.*',
+                'loops':'(?:for|while).*:',
+                'conditionals':r'.*(?:\bif\b|\bor\b|\bnot\b|\band\b|\bin\b).*',
+                'function_prams':'def.*?\((.*?)\)',
+                'lists_sets_dicts':'(?:\{|\(|\[).*(?:\}|\)|\])*',
+                'indents':'^\s{4,}.*',
+                'print':'.*print.*',
+                'email_decorators':'.*@.*',
+                'regex':'re\..*',
+                'ranges':'x?range.*'}
+
+results={key:re.findall(dict_of_things[key],data) for key in dict_of_things.keys()}
+results['regex']
