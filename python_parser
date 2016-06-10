@@ -6,9 +6,22 @@
 #find code that will be useful both in projects and to learn from 
 #apply data mining and analysis techniques to the python language 
 
-
+#stack overflow
 import pandas as pd 
 import re
+import os 
+
+#copy all python files on my local machine into a single file
+f=open('python_summary','a')
+for path, subdirs, files in os.walk('.'):
+    for name in files:
+        if name.endswith('py'):
+            g=open(os.path.join(path, name),'r')
+            f.write(g.read())
+            
+            
+
+
 summary={}
 commented_out=[]
 dict_of_things={'comments':'.*#.*',                        #the regex is far from complete or precise
@@ -28,6 +41,10 @@ dict_of_things={'comments':'.*#.*',                        #the regex is far fro
                 'regex':'re\..*',
                 'ranges':'x?range.*'}
 
+
+
+            
+            
 results={key:re.findall(dict_of_things[key],data) for key in dict_of_things.keys()}
 df=pd.DataFrame(results['imports'])
 import_frequency=df[0].str.replace('import','').value_counts()
