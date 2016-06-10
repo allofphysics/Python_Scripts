@@ -7,6 +7,7 @@
 #apply data mining and analysis techniques to the python language 
 
 
+import pandas as pd 
 import re
 summary={}
 commented_out=[]
@@ -28,4 +29,7 @@ dict_of_things={'comments':'.*#.*',                        #the regex is far fro
                 'ranges':'x?range.*'}
 
 results={key:re.findall(dict_of_things[key],data) for key in dict_of_things.keys()}
+df=pd.DataFrame(results['imports'])
+import_frequency=df[0].str.replace('import','').value_counts()
+
 results['regex']
