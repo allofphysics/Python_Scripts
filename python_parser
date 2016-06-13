@@ -20,12 +20,14 @@ for path, subdirs, files in os.walk('.'):
             f.write(g.read())
             
             
-
-
+f.close()
+with open('python_summary','r')  as f:
+    data=f.read()
 summary={}
 commented_out=[]
+keywords_of_interest=[''] #
 dict_of_things={'comments':'.*#.*',                        #the regex is far from complete or precise
-                'imports':'import .*',
+                'imports':'.*import .*',
                 'variables':'.*=.*',
                 'print':'print.*',
                 'function_definitions':'def.*',
@@ -50,3 +52,7 @@ df=pd.DataFrame(results['imports'])
 import_frequency=df[0].str.replace('import','').value_counts()
 
 results['regex']
+
+x=open('report.txt','w')
+x.write(str(results))
+x.close()
