@@ -1,58 +1,58 @@
-#some goals of the script
-#Extract relevant information out of python libraries and packages in a progrmatic way. 
-#determine some metrics of code quality
-#contact information if provided
-#information that will help me better use the code in my projects
-#find code that will be useful both in projects and to learn from 
-#apply data mining and analysis techniques to the python language 
+# some goals of the script
+# Extract relevant information out of python libraries and packages in a progrmatic way.
+# determine some metrics of code quality
+# contact information if provided
+# information that will help me better use the code in my projects
+# find code that will be useful both in projects and to learn from
+# apply data mining and analysis techniques to the python language
 
-#stack overflow
-import pandas as pd 
+
+# autopep8 --in-place --aggressive --aggressive <filename>
+
+import os
 import re
-import os 
+import pandas as pd
 
-#copy all python files on my local machine into a single file
-f=open('python_summary','a')
+
+# copy all python files on my local machine into a single file
+f = open('python_summary', 'a')
 for path, subdirs, files in os.walk('.'):
     for name in files:
         if name.endswith('py'):
-            g=open(os.path.join(path, name),'r')
+            g = open(os.path.join(path, name), 'r')
             f.write(g.read())
-            
-            
+
+
 f.close()
-with open('python_summary','r')  as f:
-    data=f.read()
-summary={}
-commented_out=[]
-keywords_of_interest=[''] #
-dict_of_things={'comments':'.*#.*',                        #the regex is far from complete or precise
-                'imports':'.*import .*',
-                'variables':'.*=.*',
-                'print':'print.*',
-                'function_definitions':'def.*',
-                'class_definitions':'class.*',
-                'return_statements':'return.*',
-                'loops':'(?:for|while).*:',
-                'conditionals':r'.*(?:\bif\b|\bor\b|\bnot\b|\band\b|\bin\b).*',
-                'function_prams':'def.*?\((.*?)\)',
-                'lists_sets_dicts':'(?:\{|\(|\[).*(?:\}|\)|\])*',
-                'indents':'^\s{4,}.*',
-                'print':'.*print.*',
-                'email_decorators':'.*@.*',
-                'regex':'re\..*',
-                'ranges':'x?range.*'}
+with open('python_summary', 'r') as f:
+    data = f.read()
+summary = {}
+commented_out = []
+dict_of_things = {'comments': '.*#.*',  # the regex is far from complete or precise
+                  'imports': '.*import .*',
+                  'variables': '.*=.*',
+                  'print': 'print.*',
+                  'function_definitions': 'def.*',
+                  'class_definitions': 'class.*',
+                  'return_statements': 'return.*',
+                  'loops': '(?:for|while).*:',
+                  'conditionals': r'.*(?:\bif\b|\bor\b|\bnot\b|\band\b|\bin\b).*',
+                  'function_prams': 'def.*?\((.*?)\)',
+                  'lists_sets_dicts': '(?:\{|\(|\[).*(?:\}|\)|\])*',
+                  'indents': '^\s{4,}.*',
+                  'print': '.*print.*',
+                  'email_decorators': '.*@.*',
+                  'regex': 're\..*',
+                  'ranges': 'x?range.*'}
 
 
-
-            
-            
-results={key:re.findall(dict_of_things[key],data) for key in dict_of_things.keys()}
-df=pd.DataFrame(results['imports'])
-import_frequency=df[0].str.replace('import','').value_counts()
+results = {
+    key: re.findall(
+        dict_of_things[key],
+        data) for key in dict_of_things.keys()}
+df = pd.DataFrame(results['imports'])
+import_frequency = df[0].str.replace('import', '').value_counts()
 
 results['regex']
 
-x=open('report.txt','w')
-x.write(str(results))
-x.close()
+[pd.DataFrame(results[item]).to_csv(item + '.csv') for item in results.keys()]
