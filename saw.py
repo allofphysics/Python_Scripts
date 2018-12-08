@@ -35,6 +35,7 @@ class saw():
         dct = self.create_transition_dic()
         solution = list(self.parent)
         for ix in range(len(solution)-1):
+            #print ix
             src = int(solution[ix])
             dst = int(solution[ix+1])
             if dst in dct[src]:
@@ -51,7 +52,7 @@ class saw():
         return self.score
     
     def mutate(self):
-        index = random.randrange(0,len(self.parent))
+        index = random.randrange(1,len(self.parent))
         childGenes = list(self.parent)
         newGene,alternate = random.sample(self.geneSet,2)
         if newGene == childGenes[index]:
