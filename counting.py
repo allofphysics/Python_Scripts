@@ -1,31 +1,99 @@
 import pandas as pd
-pd.options.display.max_rows = 999
-f =open('some_file.py')
+from sys import argv
+import pickle
+from os import listdir 
+
+index_exists = [x for x in listdir('.') if 'index' == str(x)]
+if index_exists:
+    try:
+        f = open('index','rb')
+        index = pickle.loads(f.read())
+        f.close()
+    except Exception as e:
+        print(e)
+else:
+    index = {}
+
+
+ngrams_count_exists = [x for x in listdir('.') if 'ngrams_count' == str(x)]
+if ngrams_count_exists:
+    try:
+        f = open('ngrams_count','rb')
+        ngrams_count = pickle.loads(f.read())
+        f.close()
+    except Exception as e:
+        print(e)
+else:
+    ngrams_count = {}
+ 
+
+
+
+f =open(argv[1])
 data = f.read()
 f.close()
 
+from random import randint
 lst = [ord(x) for x in data]
-chars = set(lst)
 
-dct = {}
-for char in chars:
-    dct[char] = lst.count(char)
+from tqdm import tqdm
+ngrams = []
+for i in tqdm(range(1,10)):
+    for ix,xs in enumerate(lst[:-i]):
+        ngram = tuple(lst[ix:ix+i])
+        ngrams.append(ngram)
+        if ngram not in index.keys():
+            index[ngram]= len(index)
 
-def ngram_lst(n):
-    for ix,char in enumerate(lst):
-        if ix != len(lst)-(n-1) and n !=1:
-            if tuple([chr(x) for x in lst[ix:ix+n]]) not in dct.keys():
-                dct[tuple([chr(x) for x in lst[ix:ix+n]])] = 1
-            else:
-                dct[tuple([chr(x) for x in lst[ix:ix+n]])] += 1
 
-for ix in range(2,500):
-    ngram_lst(ix)
+s = set(ngrams)
+for ix in s:
+    count = ngrams.count(ix)
+    if ix not in ngrams_count.keys():
+        ngrams_count[ix] = count
+    else:
+        ngrams_count[ix] += count
 
-df = pd.DataFrame(pd.Series(dct))
-df = df.sort_values(0,ascending=False)
-df.reset_index(inplace=True)
-df =df[df[0] >1]
-df =df[df['index'].apply(lambda x: '(' in str(x))]
-df = df.sort_values(['index',0])
-df.to_csv('test.csv')
+
+
+
+serialized_index = pickle.dumps(index)
+with open('index','wb') as f:
+    f.write(serialized_index)
+f.close()
+
+serialized_ngrams_count = pickle.dumps(ngrams_count)
+with open('ngrams_count','wb') as f:
+    f.write(serialized_ngrams_count)
+f.close()
+
+
+print(len(index))
+dct = sorted(ngrams_count.items(),key=lambda  x:-x[1])
+import  pandas as pd
+df  = pd.DataFrame(dct)
+print(df.to_csv('text.csv'))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
