@@ -38,16 +38,13 @@ def dump(fname: str,
         string = f_name.read()
         tree = parse(string, fname, None, errors=None, options=options)
         if not quiet:
-            from pudb import set_trace
             lst = tree.__dict__['defs']
             for xs in lst:
                 if isinstance(xs,mypy.nodes.FuncDef):
                     print(xs.line,xs.name)
-                
                 if isinstance(xs,mypy.nodes.ExpressionStmt):
                    resp = xs.__dict__['expr']
                    for ix in resp.args:
-                       
                        print(ix.line,ix.callee.name)
 
 
