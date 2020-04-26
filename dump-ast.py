@@ -12,6 +12,9 @@ from mypy.options import Options
 from mypy import defaults
 from mypy.parse import parse
 import mypy
+from snoop import spy
+
+
 
 def dump(fname: str,
          python_version: Tuple[int, int],
@@ -37,16 +40,25 @@ def dump(fname: str,
     with open(fname, 'rb') as f_name:
         string = f_name.read()
         tree = parse(string, fname, None, errors=None, options=options)
+        from pudb import set_trace
+        seen = set()
         if not quiet:
-            lst = tree.__dict__['defs']
+            lst = tree.defs
             for xs in lst:
                 if isinstance(xs,mypy.nodes.FuncDef):
-                    print(xs.line,xs.name)
+                    seen.add((xs.line,xs.name))
                 if isinstance(xs,mypy.nodes.ExpressionStmt):
-                   resp = xs.__dict__['expr']
+                   resp = xs.expr
                    for ix in resp.args:
-                       print(ix.line,ix.callee.name)
+                       seen.add((ix.line,ix))
+                
+                if isinstance(xs,mypy.nodes.Decorator):
+                    for node in xs.decorators:
+                        seen.add((xs.line,xs.name))
 
+    for item in sorted(list(seen),key=lambda x:x[0]):
+        print(item[0],item[1])
+                
 
 def main() -> None:
     """
