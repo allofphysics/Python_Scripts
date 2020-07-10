@@ -6,7 +6,7 @@ import numpy as np
 
 book_keeping = defaultdict()
 
-def monotone_increasing(lst):
+def monotonically_increasing(lst):
     #https://stackoverflow.com/a/4983308
     pairs = zip(lst, lst[1:])
     return all(itertools.starmap(operator.le, pairs))
@@ -44,7 +44,7 @@ for ix in list(list_products([3,4,5])):
         if isinstance(item,tuple):
             for iy in item:
                 temp_lst.append(iy)
-    if monotone_increasing(temp_lst):
+    if monotonically_increasing(temp_lst):
         results.append(temp_lst)
 
 results
