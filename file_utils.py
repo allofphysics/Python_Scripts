@@ -5,7 +5,9 @@ def listfiles(folder,file_type=False):
             if bool(file_type):
                 if bool(filename.endswith(file_type)):
                     yield os.path.join(root, filename)
-
+            else:
+                    yield os.path.join(root, filename)
+                
 
 def read_file(filename):
     # https://github.com/jendrikseipp/vulture
