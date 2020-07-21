@@ -1,14 +1,35 @@
-def create_file_index(start_pos='.'):
-    #https://stackoverflow.com/questions/2909975/python-list-directory-subdirectory-and-files
+def listfiles(folder,file_type=False):
     import os
-    file_paths = []
-    for path, subdirs, files in os.walk(start_pos):
-        for name in files:
-            resp = os.path.join(path, name)
-            file_paths.append(resp)
-    #TODO add prefix option
-    file_paths = [x.replace('.\\',os.getcwd()+'\\') for x in file_paths]
-    return file_paths
+    for root, folders, files in os.walk(folder):
+        for filename in folders + files:
+            if bool(file_type):
+                if bool(filename.endswith(file_type)):
+                    yield os.path.join(root, filename)
+
+
+def read_file(filename):
+    # https://github.com/jendrikseipp/vulture
+    # vulture - Find dead code.
+    # Python >= 3.2
+    import tokenize
+
+    try:
+        # Use encoding detected by tokenize.detect_encoding().
+        with tokenize.open(filename) as f:
+            return f.read()
+    except (SyntaxError, UnicodeDecodeError) as err:
+        print(err)
+
+
+def get_file_type(filename):
+    # https://stackoverflow.com/a/24073625
+    import subprocess
+    import shlex
+
+    cmd = shlex.split("file --mime-type {0}".format(filename))
+    result = subprocess.check_output(cmd)
+    mime_type = result.split()[-1]
+    return mime_type
 
 def get_file_checksum(file_name):
     try:
@@ -41,20 +62,3 @@ def copy_file_named_checksum(file_name,folder_name,file_type):
     except Exception as e:
         print(e)
 
-def filter_by_filetype(file_type):
-    import re
-    file_paths = create_file_index()
-    resp = [x for x in file_paths if re.findall('\.{}$'.format(file_type),x)]
-    return resp
-
-###############################################################################################
-
-mkdir('ML')
-file_type = 'ml'
-file_paths = filter_by_filetype(file_type)
-for src in file_paths:
-    try:
-        dst = '{}\\'.format(file_type.upper())
-        copy_file_named_checksum(src,dst,file_type)
-    except Exception as e:
-        print(e)
