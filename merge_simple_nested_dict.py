@@ -1,3 +1,12 @@
+"""
+The goal is to learn how to work with nested dictionaries
+
+(
+{1: {2: {3: 5}}}, 
+{1: {2: {4: 4}}
+) => {1: {2: {3: 5, 4: 4}}}
+
+"""
 def pack(lst):
     if isinstance(lst, list):
         if len(lst) > 1:
